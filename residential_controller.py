@@ -1,155 +1,138 @@
 class Column:
-    def __init__(_id, _amountOfFloors, _amountOfElevators):
-        this.ID = _id
-        this.status = 'offline'
-        this.elevatorsList = []
-        this.callButtonsList = []
-        # return _amountOfElevators
-        # this._amountOfFloors = _amountOfFloors
-        #this._amountOfElevators = _amountOfElevators
-    # if __name__ == '__Column__': Column()
-    for i in _amountOfElevators:
-        elevator = Elevator(i, _amountOfElevators)
-        this.elevatorsList.push(elevator)
+    def __init__(self, _id, _amountOfFloors, _amountOfElevators) -> None:
+        self.ID = _id
+        self.status = 'offline'
+        self.elevatorsList = []
+        self.callButtonsList = []
 
-    for j in _amountOfFloors:
-        floorButton = j
-        if j != 1:
-            button = CallButton(j, 'offline', floorButton, 'down');
-            this.callButtonsList.push(button)
-        else:
-            j != _amountOfFloors
-            button = CallButton(j, 'offline', floorButton, 'up');
-            this.callButtonsList.push(button)
+        for i in range(0, _amountOfElevators):
+            elevator = Elevator(i, _amountOfElevators)
+            self.elevatorsList.append(elevator)
 
+        for j in range(0, _amountOfFloors + 1):
+            floorButton = j
+            if j != 1:
+                button = CallButton(j, j, 'down');
+                self.callButtonsList.append(button)
+            else:
+                j != _amountOfFloors
+                button = CallButton(j, j, 'up');
+                self.callButtonsList.append(button)
 
-    def requestElevator(_requestedFloor, _direction):
-        # //Select an elevator/available cage
-        this.bestElevator(_requestedFloor, _direction);
+    def bestElevator(self, _requestedFloor):
+        getElevator = ""
+        floorCost = 10000
 
-        # //process request
-        elevator2 = Elevator(this.ID)
-        elevator2.floorRequestList.push(_requestedFloor)
-        elevator2.floorRequestList.sort(sortFloors)
-        console.log("Elevator Requested on Floor: " + elevator2.floorRequestList);
+        for i in range(len(self.elevatorsList)):
+            if self.elevatorsList[i].status == 'idle':
+                elevatorDistance = abs(self.elevatorsList[i].currentFloor - _requestedFloor)
+            if elevatorDistance < floorCost:
+                floorCost = elevatorDistance
+                getElevator = self.elevatorsList[i]
+                getElevator.status = 'active'
 
-        # //Make the chosen elevator move to the user/routed
-        elevator2.go()
+            return getElevator
 
-        # //Operate the doors
-        elevator2.open()
+    def requestElevator(self, _requestedFloor, _direction):
+        getElevator = self.bestElevator(_requestedFloor)
+        print("Elevator " + self.ID + " is on route.");
 
+        getElevator.floorRequestList.append(_requestedFloor);
+        # getElevator.floorRequestList.sort(sortFloors);
+        getElevator.go(_requestedFloor);
 
-    def bestElevator(_requestedFloor, _direction):
-        findElevator;
-        floorCost = 999999;
-        for i in this.elevatorsList.length:
-            elevatorToll = Math.abs(this.elevatorsList[i].currentFloor - _requestedFloor);
-            if (elevatorToll < floorCost):
-                floorCost = elevatorToll
-                findElevator = this.elevatorsList[i]
-
-        return findElevator;
-        console.log(findElevator);
-        console.log("Elevator " + this.ID + " is on route.")
-
+        return getElevator
 
 class Elevator:
-    def __init__(_id, _amountOfFloors):
-        this.ID = _id
-        this.status = 'online'
-        this.direction
-        this.currentFloor = 1
-        this.door = Door(_id)
-        this.floorRequestButtonsList = []
-        this.floorRequestList = []
+    def __init__(self, _id, _amountOfFloors) -> None:
+        self.ID = _id
+        self.status = 'idle'
+        self.direction = ""
+        self.currentFloor = 1
+        self.door = Door(_id)
+        self.floorRequestButtonsList = []
+        self.floorRequestList = []
 
-    for i in _amountOfFloors:
-        requestButtonObject = FloorRequestButton(i, _amountOfFloors)
-        this.floorRequestButtonsList.push(requestButtonObject)
+        for i in range(_amountOfFloors):
+            requestButtonObject = FloorRequestButton(i, _amountOfFloors)
+            self.floorRequestButtonsList.append(requestButtonObject)
 
-    def requestFloor(_requestedFloor):
+    def requestFloor(self, _requestedFloor):
 
-        # //process request
-        this.floorRequestList.push(_requestedFloor)
-        console.log("Floor to go to once inside: " + this.floorRequestList)
-        this.floorRequestList.sort(sortFloors)
+        self.floorRequestList.append(_requestedFloor)
+        print("Floor to go to once inside: " + self.floorRequestList)
+        self.floorRequestList.sort(sortFloors)
 
-        # //Make the elevator move to the user’s destination
-        this.go()
+        self.go()
 
-        # //Operate the doors
-        this.open()
+    def go(self, _requestedFloor):
+        while range(len(self.floorRequestList)):
+            requestedDestination = self.floorRequestList[0]
+            self.status = 'in transit'
 
-    def go():
-        while (this.floorRequestList.length != 0):
-            requestedDestination = this.floorRequestList[0];
-            this.status = 'in transit';
+            if (self.currentFloor == requestedDestination):
+                self.status = 'at destination'
+                self.direction = 'idle'
+                self.door.status = 'open'
 
-        if (this.currentFloor == requestedDestination):
-            this.status = 'at destination'
-            this.direction = 'idle';
-            this.door.status = 'open';
-            console.log("Door Status: " + this.door.status);
+            elif (self.currentFloor < requestedDestination):
+                self.direction = 'up'
+                while (self.currentFloor < requestedDestination):
+                  print("Elevator ", self.ID, " is currently on floor: ", self.currentFloor)
+                  self.currentFloor += 1
 
-        elif (this.currentFloor < requestedDestination):
-            this.direction = 'up';
-            while (this.currentFloor < requestedDestination):
-              console.log("Elevator " + this.ID + " is currently on floor: " + this.currentFloor)
-              this.currentFloor += this.currentFloor
+            elif (self.currentFloor > requestedDestination):
+                self.direction = 'down'
+                while (self.currentFloor > requestedDestination):
+                  print("Elevator ", self.ID, " is currently on floor: ", self.currentFloor)
+                  self.currentFloor -= 1
 
-        elif (this.currentFloor > requestedDestination):
-            this.direction = 'down'
-            while (this.currentFloor > requestedDestination):
-              console.log("Elevator " + this.ID + " is currently on floor: " + this.currentFloor);
-              this.currentFloor -= this.currentFloor
+        self.status = 'offline'
+        self.floorRequestList.pop()
+        print("Elevator has arrived on floor: " + self.currentFloor)
+        print("Opening doors <>")
 
-        this.status = 'offline'
-        this.floorRequestList.shift()
-        console.log("Elevator " + this.ID + " has arrived on floor: " + this.currentFloor)
-        console.log("Opening doors <>")
-
-        this.status = 'idle'
-
-    def open():
-        while (this.currentFloor == this._requestedFloor):
-            this.door.status = 'open';
-            console.log("Opening doors <>")
+        self.status = 'idle'
 
 class CallButton:
-    def __init__(_id, _floor, _direction):
-        this.ID = _id,
-        this.status = 'off',
-        this.floor = _floor,
-        this.direction
+    def __init__(self, _id, _floor, _direction) -> None:
+        self.ID = _id,
+        self.status = 'off',
+        self.floor = _floor,
+        self.direction = ""
 
 class FloorRequestButton:
-    def __init__(_id, _floor):
-        this.ID = _id,
-        this.status = 'closed',
-        this.floor = _floor
+    def __init__(self, _id, _floor) -> None:
+        self.ID = _id,
+        self.status = 'closed',
+        self.floor = _floor
 
 class Door:
-    def __init__(_id):
-        this.ID = _id,
-        this.status = 'closed'
+    def __init__(self, _id) -> None:
+        self.ID = _id,
+        self.status = 'closed'
 
-def sortFloors(a,b):
+def sortFloors(self, a, b):
     return a-b
 
+#test scenario
+column = Column('B',2,2)
 
-# //SCENARIO 1 REVISED *NOT WORKING*
-# // let column = new Column("A",1,1) //_id, _amountOfFloors, _amountOfElevators
-# // column.elevatorsList[0].currentFloor = 3
-# // let elevator = column.requestElevator(3,'up') //_requestedFloor, _direction
-# // elevator.requestFloor(7) //_requestedFloor
+column.elevatorsList[0].currentFloor = 3
+elevator = column.requestElevator(1,'down')
+elevator.requestFloor(6)
 
-# // SCENARIO 1
-column1 = Column("A",1,1) //_id, _amountOfFloors,
-column1.elevatorsList[0].currentFloor = 3
-column1.requestElevator(3,'up') //_requestedFloor, _direction
-# // console.log(column1);
+column.elevatorsList[0].currentFloor = 6
+elevator1 = column.requestElevator(3,'down')
+elevator1.requestFloor(5)
 
-elevator1 = Elevator("A",4) //_id, _amountOfFloors
-elevator1.requestFloor(7) //_requestedFloor
-# // console.log(elevator1);
+column2 = Column('A',4,1)
+
+column2.elevatorsList[0].currentFloor = 10
+elevator2 = column2.requestElevator(9,'up')
+elevator2.requestFloor(2)
+
+        # return _amountOfElevators
+        # self._amountOfFloors = _amountOfFloors
+        #self._amountOfElevators = _amountOfElevators
+    # if __name__ == '__Column__': Column()
