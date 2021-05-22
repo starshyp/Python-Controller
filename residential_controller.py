@@ -35,7 +35,7 @@ class Column:
 
     def requestElevator(self, _requestedFloor, _direction):
         getElevator = self.bestElevator(_requestedFloor)
-        print("Elevator " + self.ID + " is on route.");
+        print("** ELEVATOR " + self.ID + " IS ON ROUTE **");
 
         getElevator.floorRequestList.append(_requestedFloor);
         # getElevator.floorRequestList.sort(sortFloors);
@@ -60,13 +60,13 @@ class Elevator:
     def requestFloor(self, _requestedFloor):
 
         self.floorRequestList.append(_requestedFloor)
-        print("Floor to go to once inside: " + self.floorRequestList)
-        self.floorRequestList.sort(sortFloors)
+        print("Floor to go to once inside: ", self.floorRequestList)
+        # self.floorRequestList.sort(sortFloors)
 
-        self.go()
+        self.go(_requestedFloor)
 
     def go(self, _requestedFloor):
-        while range(len(self.floorRequestList)):
+        if range(len(self.floorRequestList)):
             requestedDestination = self.floorRequestList[0]
             self.status = 'in transit'
 
@@ -78,18 +78,18 @@ class Elevator:
             elif (self.currentFloor < requestedDestination):
                 self.direction = 'up'
                 while (self.currentFloor < requestedDestination):
-                  print("Elevator ", self.ID, " is currently on floor: ", self.currentFloor)
+                  print("Elevator is currently on floor: ", self.currentFloor)
                   self.currentFloor += 1
 
             elif (self.currentFloor > requestedDestination):
                 self.direction = 'down'
                 while (self.currentFloor > requestedDestination):
-                  print("Elevator ", self.ID, " is currently on floor: ", self.currentFloor)
+                  print("Elevator is currently on floor: ", self.currentFloor)
                   self.currentFloor -= 1
 
         self.status = 'offline'
         self.floorRequestList.pop()
-        print("Elevator has arrived on floor: " + self.currentFloor)
+        print("Elevator has arrived on floor: ", self.currentFloor)
         print("Opening doors <>")
 
         self.status = 'idle'
@@ -112,8 +112,8 @@ class Door:
         self.ID = _id,
         self.status = 'closed'
 
-def sortFloors(self, a, b):
-    return a-b
+# def sortFloors(self, a, b):
+#     return a-b
 
 #test scenario
 column = Column('B',2,2)
